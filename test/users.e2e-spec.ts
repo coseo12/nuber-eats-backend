@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
-import { getConnection, getRepository, Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as request from 'supertest';
 import { User } from 'src/users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
