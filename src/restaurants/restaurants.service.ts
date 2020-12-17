@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
 import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
+import { DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import {
   EditRestaurantInput,
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dto';
 import { Category } from './entities/category.entity';
-import { Restaurant } from './entities/restaurants.entity';
 import { CategoryRepository } from './repositories/category.repository';
+import { RestaurantRepository } from './repositories/restaurant.repository';
 
 @Injectable()
 export class RestaurantService {
   constructor(
-    @InjectRepository(Restaurant)
-    private readonly restaurants: Repository<Restaurant>,
+    private readonly restaurants: RestaurantRepository,
     private readonly categories: CategoryRepository,
   ) {}
 
@@ -47,19 +45,13 @@ export class RestaurantService {
     editRestaurantInput: EditRestaurantInput,
   ): Promise<EditRestaurantOutput> {
     try {
-      const restaurant = await this.restaurants.findOneOrFail(
+      const checkRestaurant = await this.restaurants.checkRestaurant(
+        owner.id,
         editRestaurantInput.restaurantId,
       );
-      if (!restaurant) {
+      if (!checkRestaurant.ok) {
         return {
-          ok: false,
-          error: 'Restaurant not found',
-        };
-      }
-      if (owner.id !== restaurant.ownerId) {
-        return {
-          ok: false,
-          error: `You can't edit a restaurant that uou don't own`,
+          ...checkRestaurant,
         };
       }
       let category: Category = null;
@@ -83,6 +75,34 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not edit Restaurant',
+      };
+    }
+  }
+
+  async deleteRestaurant(
+    owner,
+    { restaurantId },
+  ): Promise<DeleteRestaurantOutput> {
+    try {
+      const checkRestaurant = await this.restaurants.checkRestaurant(
+        owner.id,
+        restaurantId,
+      );
+      if (!checkRestaurant.ok) {
+        return {
+          ...checkRestaurant,
+        };
+      }
+
+      await this.restaurants.delete(restaurantId);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not delete Restaurant',
       };
     }
   }
