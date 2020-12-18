@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
+import { ILike } from 'typeorm';
 import { AllCategoriesOutput } from './dtos/all-categories-dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import {
@@ -11,7 +12,12 @@ import {
   EditRestaurantInput,
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dto';
-import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dot';
+import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
+import {
+  SearchRestaurantInput,
+  SearchRestaurantOutput,
+} from './dtos/search-restaurant.dto';
 import { Category } from './entities/category.entity';
 import { CategoryRepository } from './repositories/category.repository';
 import { RestaurantRepository } from './repositories/restaurant.repository';
@@ -142,12 +148,8 @@ export class RestaurantService {
         };
       }
 
-      const restaurants = await this.restaurants.find({
-        where: {
-          category,
-        },
-        take: 25,
-        skip: (page - 1) * 25,
+      const { restaurants } = await this.restaurants.findPagination(page, {
+        category,
       });
 
       category.restaurants = restaurants;
@@ -170,21 +172,51 @@ export class RestaurantService {
 
   async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
     try {
-      const [results, totalResults] = await this.restaurants.findAndCount({
-        skip: (page - 1) * 25,
-        take: 25,
-      });
-
-      return {
-        ok: true,
-        results,
-        totalPages: Math.ceil(totalResults / 25),
-        totalResults,
-      };
+      return await this.restaurants.findAndCountPagination(page);
     } catch (error) {
       return {
         ok: false,
         error: `Could not load restaurants`,
+      };
+    }
+  }
+
+  async findRestaurantById({
+    restaurantId,
+  }: RestaurantInput): Promise<RestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(restaurantId);
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: `Restaurant not found`,
+        };
+      }
+
+      return {
+        ok: true,
+        restaurant,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: `Could not find restaurant`,
+      };
+    }
+  }
+
+  async searchRestaurantByName({
+    query,
+    page,
+  }: SearchRestaurantInput): Promise<SearchRestaurantOutput> {
+    try {
+      return await this.restaurants.findAndCountPagination(page, {
+        name: ILike(`%${query}%`),
+      });
+    } catch (error) {
+      return {
+        ok: false,
+        error: `Could not search for restaurants`,
       };
     }
   }
