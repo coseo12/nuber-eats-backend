@@ -41,7 +41,7 @@ import { AuthModule } from './auth/auth.module';
       }),
     }),
     TypeOrmModule.forRoot({
-      type: 'mariadb',
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
