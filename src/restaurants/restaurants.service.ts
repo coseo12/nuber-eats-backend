@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import create from 'got/dist/source/create';
 import { User } from 'src/users/entities/user.entity';
 import { ILike } from 'typeorm';
 import { AllCategoriesOutput } from './dtos/all-categories-dto';
@@ -9,7 +8,9 @@ import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
+import { DeleteDishInput, DeleteDishOutput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
+import { EditDishInput, EditDishOutput } from './dtos/edit-dish.dto';
 import {
   EditRestaurantInput,
   EditRestaurantOutput,
@@ -248,10 +249,10 @@ export class RestaurantService {
         };
       }
 
-      const dish = await this.dishes.save(
+      await this.dishes.save(
         this.dishes.create({ ...createDishInput, restaurant }),
       );
-      console.log(dish);
+
       return {
         ok: true,
       };
@@ -259,6 +260,64 @@ export class RestaurantService {
       return {
         ok: false,
         error: `Could not create dish`,
+      };
+    }
+  }
+
+  async editDish(
+    owner: User,
+    editDishInput: EditDishInput,
+  ): Promise<EditDishOutput> {
+    try {
+      const checkDish = await this.dishes.checkDish(
+        owner.id,
+        editDishInput.dishId,
+      );
+      if (!checkDish.ok) {
+        return {
+          ...checkDish,
+        };
+      }
+
+      await this.dishes.save([
+        {
+          id: editDishInput.dishId,
+          ...editDishInput,
+        },
+      ]);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: `Could not eidt dish`,
+      };
+    }
+  }
+
+  async deleteDish(
+    owner: User,
+    { dishId }: DeleteDishInput,
+  ): Promise<DeleteDishOutput> {
+    try {
+      const checkDish = await this.dishes.checkDish(owner.id, dishId);
+      if (!checkDish.ok) {
+        return {
+          ...checkDish,
+        };
+      }
+
+      await this.dishes.delete(dishId);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: `Could not delete dish`,
       };
     }
   }
