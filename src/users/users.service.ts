@@ -6,20 +6,19 @@ import {
   CreateAccountOutput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
-import { Verification } from './entities/verification.entity';
 import { VerifyEmailOutput } from './dtos/verify-email.dto';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 import { MailService } from 'src/mail/mail.service';
+import { UserRepository } from './repositories/user.repository';
+import { VerificationRepository } from './repositories/verification.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
-    @InjectRepository(Verification)
-    private readonly verifications: Repository<Verification>,
+    private readonly users: UserRepository,
+    private readonly verifications: VerificationRepository,
     private readonly jwtServie: JwtService,
     private readonly mailService: MailService,
   ) {}
