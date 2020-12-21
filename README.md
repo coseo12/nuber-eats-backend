@@ -10,7 +10,7 @@ The Backend of Uber Eats Clone
 "delivery":
 
 {
-"x-jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjA4Mzg4NTgyfQ.UIaJdQZZkNpp7H2Y2VgBPr479evFNx-Ql0N0sMhUxYg"
+"x-jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjA4NTM2MDM4fQ.vD-mY3YOf1u7U-v4aMUPAeKlpq2SLigvhpFKO7iR7D0"
 }
 
 "client":
