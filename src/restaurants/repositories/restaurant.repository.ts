@@ -48,6 +48,9 @@ export class RestaurantRepository extends Repository<Restaurant> {
       },
       take: this.take(),
       skip: this.skip(page),
+      order: {
+        isPromoted: 'DESC',
+      },
     });
     return {
       ok: true,
@@ -65,6 +68,9 @@ export class RestaurantRepository extends Repository<Restaurant> {
       },
       skip: (page - 1) * this.take(),
       take: this.take(),
+      order: {
+        isPromoted: 'DESC',
+      },
     });
 
     return {
