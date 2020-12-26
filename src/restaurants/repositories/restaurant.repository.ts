@@ -71,6 +71,7 @@ export class RestaurantRepository extends Repository<Restaurant> {
       order: {
         isPromoted: 'DESC',
       },
+      relations: ['category'],
     });
 
     return {
