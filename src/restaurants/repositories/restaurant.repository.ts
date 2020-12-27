@@ -5,7 +5,7 @@ import { Restaurant } from '../entities/restaurants.entity';
 @EntityRepository(Restaurant)
 export class RestaurantRepository extends Repository<Restaurant> {
   take() {
-    return 25;
+    return 3;
   }
 
   skip(page: number) {
