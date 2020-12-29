@@ -20,6 +20,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -40,6 +41,9 @@ import { Payment } from './payments/entities/payment.entity';
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
+        AWS_USER: Joi.string().required(),
+        AWS_KEY: Joi.string().required(),
+        AWA_SECRET_KEY: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -88,6 +92,7 @@ import { Payment } from './payments/entities/payment.entity';
     OrdersModule,
     CommonModule,
     PaymentsModule,
+    UploadsModule,
   ],
   controllers: [],
   providers: [],
