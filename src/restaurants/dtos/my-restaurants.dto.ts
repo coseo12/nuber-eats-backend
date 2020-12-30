@@ -4,6 +4,6 @@ import { Restaurant } from '../entities/restaurants.entity';
 
 @ObjectType()
 export class MyRestaurantsOutput extends CoreOutput {
-  @Field(type => [Restaurant])
+  @Field(type => [Restaurant], { nullable: true })
   restaurants?: Restaurant[];
 }
