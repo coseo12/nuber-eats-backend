@@ -19,7 +19,7 @@ export class UsersService {
   constructor(
     private readonly users: UserRepository,
     private readonly verifications: VerificationRepository,
-    private readonly jwtServie: JwtService,
+    private readonly jwtService: JwtService,
     private readonly mailService: MailService,
   ) {}
 
@@ -64,7 +64,7 @@ export class UsersService {
           error: 'Wrong password',
         };
       }
-      const token = this.jwtServie.sign(user.id);
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
         token,
